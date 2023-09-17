@@ -21,4 +21,22 @@ module.exports.postSignUp = (req,res,next)=>{
         })
         .catch(err=>console.log(err))
     }
+};
+module.exports.getlogin = (req,res,next)=>{
+    res.sendFile(path.join(__dirname,'../','views','login.html'))
+};
+module.exports.postLogin = (req,res,next)=>{
+    let user = null;
+    User.findByPk(req.body.Email).then(u=>user=u).catch(e=>console.log(e));
+    if(user == null){
+        res.send()
+    }
+    else{
+        if(req.body.Password==user.password){
+            res.json(user)
+        }
+        else{
+            res.send()
+        }
+    }
 }

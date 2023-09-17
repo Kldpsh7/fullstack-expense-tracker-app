@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <form action="/user/login" method="POST" class="ligin-form" id="login-form">
+        <label for="username" class="label">Username</label>
+        <input type="text" class="login-username" id="username" name="Email" required>
+        <label for="login-password" class="label"></label>
+        <input type="password" class="login-password" id="login-password" name="Password" required>
+        <button class="login-btn" type="submit">Login</button><br>
+        <p class="alert" id="alert" style="color: red;"></p><br>
+        <a href="/user/signup" class="signup-link">Don't Have an account? SignUp Here</a>
+    </form>
+</body>
+</html>
