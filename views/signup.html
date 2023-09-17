@@ -4,17 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
+    <script src="../signup.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
+    <h1 class="main-heading">Sign-up</h1>
     <div class="page-heading">
-        <form action="/user/signup" method="POST" class="signup-form">
+        <form onsubmit="signup(event)" class="signup-form">
             <label  class="label" for="Name">Your Name</label>
             <input type="text" class="name-input" id="Name" name="Name" required>
             <label for="Email" class="label">Email</label>
             <input name="Email" id="Email" type="email" class="email-input" required>
             <label for="Password" class="label">Password</label>
             <input id="Password" name="Password" type="password" class="password-input" required>
-            <button type="submit" class="signup-button">Sign-Up</button>
+            <button type="submit" class="signup-button">Sign-Up</button><br>
+            <div id="status"></div><br>
+            <a href="/user/login" class="login-link">Already Have an Account? Login</a>
         </form>
     </div>
 </body>
