@@ -1,5 +1,6 @@
 const path = require('path');
 const User = require('../models/user');
+const bcrypt = require('bcryptjs');
 
 module.exports.getSignUp = (req,res,next)=>{
     res.sendFile(path.join(__dirname,'../','views','signup.html'))
@@ -16,15 +17,17 @@ module.exports.postSignUp = (req,res,next)=>{
                 res.status(401).json({message:"User with this email already exists"});
             }
             else{
-                User.create({
-                    email:req.body.Email,
-                    name:req.body.Name,
-                    password:req.body.Password
-                })
-                .then(()=>{
-                    res.status(201).json({message:"Success"})
-                })
-                .catch(err=>console.log('error'))
+                bcrypt.hash(req.body.Password,10)
+                .then(hash=>{
+                    User.create({
+                        email:req.body.Email,
+                        name:req.body.Name,
+                        password:hash
+                    })
+                    .then(()=>{
+                        res.status(201).json({message:"Success"})
+                    }).catch(err=>console.log('error'))
+                }).catch(err=>console.log('error'))
             }
         })
         .catch(e=>console.log(e))
