@@ -46,14 +46,16 @@ module.exports.postLogin = (req,res,next)=>{
         .then(user=>{
             if(!user){
                 res.status(404).json({message:"User Not Found"})
-            }else{
-                if(req.body.Password!=user.password){
-                    res.status(401).json({message:"Incorrect Password"})
-                }else{
-                    res.status(201).json({message:"Login Successfull"})
-                }
             }
-        })
-        .catch(e=>console.log(e));
+            else{
+                bcrypt.compare(req.body.Password,user.password,(err,success)=>{
+                    if(success){
+                        res.status(201).json({message:"Login Successfull"})
+                    }else{
+                        res.status(401).json({message:"Incorrect Password"})
+                    }
+                })       
+            }
+        }).catch(e=>console.log(e));
     }
 }
