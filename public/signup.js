@@ -7,16 +7,16 @@ function signup(e){
     }
     axios.post('/user/signup',obj)
     .then(res=>{
+        console.log(res)
         let showMsg = document.getElementById('status');
-        console.log(res.status)
-        if(res.status===201){
-            showMsg.style="color:green"
-            showMsg.innerHTML=res.data;
-            setTimeout(() => window.location.href='/user/login', 1000);
-        }else{
-            showMsg.style="color:red"
-            showMsg.innerHTML=res.data;
-            setTimeout(() => showMsg.innerHTML='', 3000);
-        }
-    }).catch(err=>console.log(err))
+        showMsg.style="color:green"
+        showMsg.innerHTML=res.data.message;
+        setTimeout(() => window.location.href='/user/login', 1000);
+    }).catch(err=>{
+        console.log(err)
+        let showMsg = document.getElementById('status');
+        showMsg.style="color:red"
+        showMsg.innerHTML=err.response.data.message;
+        setTimeout(() => showMsg.innerHTML='', 3000);
+    })
 }

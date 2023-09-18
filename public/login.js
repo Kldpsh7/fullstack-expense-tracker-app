@@ -7,16 +7,13 @@ async function login(e){
     try{
         let res = await axios.post('/user/login',obj)
         let msg=document.getElementById('alert');
-        if(res.status===201){
-            msg.style="color: green;";
-            msg.innerHTML=res.data;
-            setTimeout(() => msg.innerHTML='', 2000);
-        }else{
-            msg.style="color: red;";
-            msg.innerHTML=res.data;
-            setTimeout(() => msg.innerHTML='', 2000);
-        }
+        msg.style="color: green;";
+        msg.innerHTML=res.data.message;
+        setTimeout(() => msg.innerHTML='', 2000);
     }catch(err){
-        console.log(err)
+        let msg=document.getElementById('alert');
+        msg.style="color: red;";
+        msg.innerHTML=err.response.data.message;
+        setTimeout(() => msg.innerHTML='', 2000);
     }
 }
