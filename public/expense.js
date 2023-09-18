@@ -1,10 +1,11 @@
 document.addEventListener('DOMContentLoaded',getRecords);
+document.getElementById('list').addEventListener('click',deleteExpense);
 
 function getRecords(){
     axios.get('/expense/data')
     .then(res=>{
         showOnScreen(res.data);
-    }).catch(err=>console.log(err))
+    }).catch(err=>console.log(err));
 }
 
 function showOnScreen(data){
@@ -43,5 +44,29 @@ async function addExpense(e){
         e.target.category.value='';
     }catch(err){
         console.log(err)
+        let msg = document.getElementById('msg');
+        msg.style='color:red';
+        msg.innerHTML=err.response.data.message;
+        setTimeout(() =>msg.innerHTML='' ,2000);
+    }
+}
+
+async function deleteExpense(e){
+    console.log(e.target.parentElement)
+    if(e.target.className=='delete'){
+        try{
+            let result = await axios.delete(`/expense/delete?id=${e.target.parentElement.id}`)
+            getRecords();
+            let msg = document.getElementById('msg');
+            msg.style='color:green';
+            msg.innerHTML=result.data.message;
+            setTimeout(() =>msg.innerHTML='' ,2000);
+        }catch(err){
+            console.log(err)
+            let msg = document.getElementById('msg');
+            msg.style='color:green';
+            msg.innerHTML=err.response.data.message;
+            setTimeout(() =>msg.innerHTML='' ,2000);
+        }
     }
 }
