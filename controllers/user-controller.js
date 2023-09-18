@@ -1,6 +1,7 @@
 const path = require('path');
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 module.exports.getSignUp = (req,res,next)=>{
     res.sendFile(path.join(__dirname,'../','views','signup.html'))
@@ -50,7 +51,7 @@ module.exports.postLogin = (req,res,next)=>{
             else{
                 bcrypt.compare(req.body.Password,user.password,(err,success)=>{
                     if(success){
-                        res.status(201).json({message:"Login Successfull"})
+                        res.status(201).json({message:"Login Successfull",token:jwtCrypt(user.email)})
                     }else{
                         res.status(401).json({message:"Incorrect Password"})
                     }
@@ -58,4 +59,8 @@ module.exports.postLogin = (req,res,next)=>{
             }
         }).catch(e=>console.log(e));
     }
+}
+
+function jwtCrypt(id){
+    return jwt.sign(id,'edgbnwuydgeiqundg147982987ded7w98de7w8ed7w198edw28w98wd798e7dw9')
 }

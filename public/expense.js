@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded',getRecords);
 document.getElementById('list').addEventListener('click',deleteExpense);
 
+axios.defaults.headers.common['auth'] = localStorage.getItem('token')
+
 function getRecords(){
     axios.get('/expense/data')
     .then(res=>{
