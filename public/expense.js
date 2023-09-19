@@ -1,4 +1,7 @@
-document.addEventListener('DOMContentLoaded',getRecords);
+document.addEventListener('DOMContentLoaded',()=>{
+    getRecords()
+    checkPrime()
+});
 document.getElementById('list').addEventListener('click',deleteExpense);
 
 axios.defaults.headers.common['auth'] = localStorage.getItem('token')
@@ -70,5 +73,44 @@ async function deleteExpense(e){
             msg.innerHTML=err.response.data.message;
             setTimeout(() =>msg.innerHTML='' ,2000);
         }
+    }
+}
+
+document.getElementById('buy-premium-btn').onclick = async (e)=>{
+    let response = await axios.get('/payment/buypremium')
+    let options = {
+        "key":response.data.key_id,
+        "order_id":response.data.order.id,
+        "handler":async (response)=>{
+            try{
+                let res = await axios.post('/payment/paid',{
+                    order_id:options.order_id,
+                    payment_id:response.razorpay_payment_id
+                })
+                alert('You Are a Premium User Now')
+                let msg = document.getElementById('msg');
+                msg.style='color:green';
+                msg.innerHTML=res.data.message;
+                localStorage.setItem("primeStatus",res.data.primeStatus)
+                checkPrime()
+            }catch(err){
+                console.log(err)
+            }
+        }
+    }
+    let rzp1 = new Razorpay(options);
+    rzp1.open();
+    e.preventDefault();
+
+    rzp1.on('payment.failed',res=>{
+        console.log(res)
+        alert('Something Went Wrong')
+    })
+}
+function checkPrime(){
+    const primeStatus=localStorage.getItem('primeStatus');
+    if(primeStatus=='true'){
+        document.getElementById('buy-premium-div').innerHTML='';
+        document.getElementById('page-heading').innerHTML += '<h3>Welcome Prime Member</h3>'
     }
 }

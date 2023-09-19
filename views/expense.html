@@ -7,7 +7,9 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
-    <h1 class="page-heading">Add Expense</h1>
+    <div class="page-heading" id="page-heading">
+        <h1 class="page-heading">Add Expense</h1>
+    </div>
     <div class="add-expense">
         <form onsubmit="addExpense(event)" class="main-form" id="main-form">
             <label for="amount" class="label">Amount</label>
@@ -33,6 +35,10 @@
 
         </ul>
     </div>
+    <div class="buy-premium-div" id="buy-premium-div">
+        <button class="buy-premium-btn" id="buy-premium-btn">Buy Premium</button>
+    </div>
 </body>
 <script src="../expense.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </html>

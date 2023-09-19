@@ -51,7 +51,7 @@ module.exports.postLogin = (req,res,next)=>{
             else{
                 bcrypt.compare(req.body.Password,user.password,(err,success)=>{
                     if(success){
-                        res.status(201).json({message:"Login Successfull",token:jwtCrypt(user.email)})
+                        res.status(201).json({message:"Login Successfull",token:jwtCrypt(user.email),primeStatus:user.isPrime})
                     }else{
                         res.status(401).json({message:"Incorrect Password"})
                     }
