@@ -37,3 +37,26 @@ module.exports.deleteExpense = async (req,res,next)=>{
         console.log(err)
     }
 }
+
+module.exports.getleaderboard = async (req,res,next)=>{
+    try{
+        let obj ={};
+        let users = await User.findAll();
+        for(let usr of users){
+            let total = 0;
+            let exps = await usr.getExpenses();
+            for(let e of exps){
+                total = total+e.amount;
+            }
+            let Uname = usr.name;
+            obj[Uname] = total
+        }
+        const sortedArr = Object.entries(obj).sort((x, y) => y[1] - x[1]);
+        const sortedObject = Object.fromEntries(sortedArr);
+        console.log(sortedObject)
+        res.status(200).json(sortedObject).end()
+    }
+    catch(err){
+        console.log(err)
+    }
+}

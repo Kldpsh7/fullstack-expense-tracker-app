@@ -36,7 +36,6 @@ async function addExpense(e){
         description:e.target.description.value,
         category:e.target.category.value
     }
-    console.log(obj)
     try{
         let res = await axios.post('http://localhost:5000/expense/data',obj)
         getRecords();
@@ -111,6 +110,34 @@ function checkPrime(){
     const primeStatus=localStorage.getItem('primeStatus');
     if(primeStatus=='true'){
         document.getElementById('buy-premium-div').innerHTML='';
-        document.getElementById('page-heading').innerHTML += '<h3>Welcome Prime Member</h3>'
+        const pageHeading = document.getElementById('page-heading');
+        pageHeading.innerHTML += '<h3>Welcome Prime Member</h3>';
+        let leaderboardbtn = document.createElement('button');
+        leaderboardbtn.id='leaderboardBtn'
+        leaderboardbtn.innerHTML='Show Leaderboard';
+        pageHeading.appendChild(leaderboardbtn);
+        pageHeading.innerHTML += '<br>'
+        document.getElementById('leaderboardBtn').onclick = showLeaderboard;
+    }
+}
+
+async function showLeaderboard(){
+    try{
+        let res = await axios.get('http://localhost:5000/expense/leaderboard')
+        let LBlist = document.getElementById('LB-list');
+        LBlist.innerHTML='';
+        let lbheading = document.createElement('h3');
+        lbheading.innerHTML='Leaderboard';
+        LBlist.appendChild(lbheading);
+        for(entry in res.data){
+            let LBlist = document.getElementById('LB-list');
+            let li = document.createElement('li');
+            li.className = 'LB-entry';
+            li.innerHTML = entry+' --> '+res.data[entry];
+            LBlist.appendChild(li)
+        }
+    }
+    catch(err){
+        console.log(err)
     }
 }
