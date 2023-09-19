@@ -1,6 +1,7 @@
 const path = require('path');
 const Expense = require('../models/expense');
 const User = require('../models/user');
+const { use } = require('../routes/user-routes');
 
 module.exports.getExpense = (req,res,next)=>{
     res.sendFile(path.join(__dirname,'../','views','expense.html'))
@@ -28,7 +29,8 @@ module.exports.postData = async (req,res,next)=>{
 module.exports.deleteExpense = async (req,res,next)=>{
     console.log(req.query.id)
     try{
-        await req.user.removeExpense(req.query.id)
+        let userExpenses = await req.user.getExpenses({where:{id: req.query.id}})
+        await userExpenses[0].destroy()
         res.status(200).json({message:'Deleted Successfully'}).end()
     }catch(err){
         res.status(500).json({message:'Something Wrong'}).end()

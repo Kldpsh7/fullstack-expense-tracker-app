@@ -5,5 +5,6 @@ const paymentController = require('../controllers/payment-controller');
 
 router.get('/buypremium',userAuth.authenticate,paymentController.getBuyPremium);
 router.post('/paid',userAuth.authenticate,paymentController.postPaymentDone);
+router.post('/failed',userAuth.authenticate,paymentController.postPaymentFailed);
 
 module.exports = router;

@@ -5,7 +5,7 @@ async function login(e){
         Password:e.target.Password.value
     }
     try{
-        let res = await axios.post('/user/login',obj)
+        let res = await axios.post('http://localhost:5000/user/login',obj)
         localStorage.setItem('token',res.data.token)
         localStorage.setItem('primeStatus',res.data.primeStatus)
         let msg=document.getElementById('alert');

@@ -7,7 +7,7 @@ document.getElementById('list').addEventListener('click',deleteExpense);
 axios.defaults.headers.common['auth'] = localStorage.getItem('token')
 
 function getRecords(){
-    axios.get('/expense/data')
+    axios.get('http://localhost:5000/expense/data')
     .then(res=>{
         showOnScreen(res.data);
     }).catch(err=>console.log(err));
@@ -38,7 +38,7 @@ async function addExpense(e){
     }
     console.log(obj)
     try{
-        let res = await axios.post('/expense/data',obj)
+        let res = await axios.post('http://localhost:5000/expense/data',obj)
         getRecords();
         let msg = document.getElementById('msg');
         msg.style='color:green';
@@ -60,7 +60,7 @@ async function deleteExpense(e){
     console.log(e.target.parentElement)
     if(e.target.className=='delete'){
         try{
-            let result = await axios.delete(`/expense/delete?id=${e.target.parentElement.id}`)
+            let result = await axios.delete(`http://localhost:5000/expense/delete?id=${e.target.parentElement.id}`)
             getRecords();
             let msg = document.getElementById('msg');
             msg.style='color:green';
@@ -77,7 +77,7 @@ async function deleteExpense(e){
 }
 
 document.getElementById('buy-premium-btn').onclick = async (e)=>{
-    let response = await axios.get('/payment/buypremium')
+    let response = await axios.get('http://localhost:5000/payment/buypremium')
     let options = {
         "key":response.data.key_id,
         "order_id":response.data.order.id,
@@ -88,9 +88,6 @@ document.getElementById('buy-premium-btn').onclick = async (e)=>{
                     payment_id:response.razorpay_payment_id
                 })
                 alert('You Are a Premium User Now')
-                let msg = document.getElementById('msg');
-                msg.style='color:green';
-                msg.innerHTML=res.data.message;
                 localStorage.setItem("primeStatus",res.data.primeStatus)
                 checkPrime()
             }catch(err){
@@ -103,8 +100,11 @@ document.getElementById('buy-premium-btn').onclick = async (e)=>{
     e.preventDefault();
 
     rzp1.on('payment.failed',res=>{
-        console.log(res)
+        console.log(res.error.metadata.order_id)
         alert('Something Went Wrong')
+        axios.post('http://localhost:5000/payment/failed',{order_id:res.error.metadata.order_id})
+        .then(()=>console.log('status set to failed'))
+        .catch(e=>console.log(e))
     })
 }
 function checkPrime(){
