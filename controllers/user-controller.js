@@ -39,22 +39,53 @@ module.exports.postLogin = async (req,res,next)=>{
         res.status(403).json({message:"Bad Request"}).end()
     }
     else {
-        let user = await User.findByPk(req.body.Email)
-        if(!user){
-                res.status(404).json({message:"User Not Found"})
+        try{
+            let user = await User.findByPk(req.body.Email)
+            if(!user){
+                    res.status(404).json({message:"User Not Found"})
+            }
+            else{
+                bcrypt.compare(req.body.Password,user.password,(err,success)=>{
+                    if(success){
+                        res.status(201).json({message:"Login Successfull",token:jwtCrypt(user.email,user.name,user.isPrime)})
+                    }else{
+                        res.status(401).json({message:"Incorrect Password"})
+                    }
+                })       
+            }
         }
-        else{
-            bcrypt.compare(req.body.Password,user.password,(err,success)=>{
-                if(success){
-                    res.status(201).json({message:"Login Successfull",token:jwtCrypt(user.email,user.name,user.isPrime)})
-                }else{
-                    res.status(401).json({message:"Incorrect Password"})
-                }
-            })       
+        catch(err){
+            console.log(err)
         }
     }
 }
 
 function jwtCrypt(id,name,prime){
     return jwt.sign({id,name,prime},'edgbnwuydgeiqundg147982987ded7w98de7w8ed7w198edw28w98wd798e7dw9')
+}
+
+module.exports.getResetPassword = (req,res,next)=>{
+    res.sendFile(path.join(__dirname,'../','views','resetPassword.html'))
+}
+
+module.exports.postResetPassword = async (req,res,next)=>{
+    console.log('This user forgot his password>>>>>',req.body.email)
+    let badReq=[null,undefined,''];
+    if(badReq.includes(req.body.email)){
+        res.status(403).json({message:"Bad Request"}).end();
+    }
+    else{
+        try{
+            const user = await User.findByPk(req.body.email)
+            console.log(user);
+            if(!user){
+                res.status(404).json({message:'User Not Found'}).end();
+            }else{
+                res.status(201).json({messgae:'Reset Mail Sent'}).end();
+            }
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
 }
