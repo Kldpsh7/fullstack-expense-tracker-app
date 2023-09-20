@@ -6,58 +6,52 @@ const jwt = require('jsonwebtoken');
 module.exports.getSignUp = (req,res,next)=>{
     res.sendFile(path.join(__dirname,'../','views','signup.html'))
 };
-module.exports.postSignUp = (req,res,next)=>{
+
+module.exports.postSignUp = async (req,res,next)=>{
     let badReq=[null,undefined,''];
     if(badReq.includes(req.body.Email) || badReq.includes(req.body.Name) || badReq.includes(req.body.Password)){
-        res.status(403).json({message:"Bad Request"}).end()
+        res.status(403).json({message:"Bad Request"}).end();
     }
     else {
-        User.findByPk(req.body.Email)
-        .then(user=>{
+        try{
+            let user = await User.findByPk(req.body.Email)        
             if(user){
                 res.status(401).json({message:"User with this email already exists"});
             }
             else{
-                bcrypt.hash(req.body.Password,10)
-                .then(hash=>{
-                    User.create({
-                        email:req.body.Email,
-                        name:req.body.Name,
-                        password:hash
-                    })
-                    .then(()=>{
-                        res.status(201).json({message:"Success"})
-                    }).catch(err=>console.log('error'))
-                }).catch(err=>console.log('error'))
-            }
-        })
-        .catch(e=>console.log(e))
+                let hash = await bcrypt.hash(req.body.Password,10);           
+                await User.create({email:req.body.Email, name:req.body.Name, password:hash});                  
+                res.status(201).json({message:"Success"});               
+        }}
+        catch(err){
+            console.log(err);
+        }
     }
 };
+
 module.exports.getlogin = (req,res,next)=>{
     res.sendFile(path.join(__dirname,'../','views','login.html'))
 };
-module.exports.postLogin = (req,res,next)=>{
+
+module.exports.postLogin = async (req,res,next)=>{
     let badReq=[null,undefined,''];
     if(badReq.includes(req.body.Email) || badReq.includes(req.body.Password)){
         res.status(403).json({message:"Bad Request"}).end()
     }
     else {
-        User.findByPk(req.body.Email)
-        .then(user=>{
-            if(!user){
+        let user = await User.findByPk(req.body.Email)
+        if(!user){
                 res.status(404).json({message:"User Not Found"})
-            }
-            else{
-                bcrypt.compare(req.body.Password,user.password,(err,success)=>{
-                    if(success){
-                        res.status(201).json({message:"Login Successfull",token:jwtCrypt(user.email,user.name,user.isPrime)})
-                    }else{
-                        res.status(401).json({message:"Incorrect Password"})
-                    }
-                })       
-            }
-        }).catch(e=>console.log(e));
+        }
+        else{
+            bcrypt.compare(req.body.Password,user.password,(err,success)=>{
+                if(success){
+                    res.status(201).json({message:"Login Successfull",token:jwtCrypt(user.email,user.name,user.isPrime)})
+                }else{
+                    res.status(401).json({message:"Incorrect Password"})
+                }
+            })       
+        }
     }
 }
 
