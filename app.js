@@ -8,6 +8,7 @@ const indexRoutes = require('./routes/index-routes');
 const errorController = require('./controllers/errorController');
 const expenseRoutes = require('./routes/expense-routes');
 const paymentRoutes = require('./routes/payment-routes');
+const premiumRoutes = require('./routes/premium-routes');
 
 const User = require('./models/user');
 const Expense = require('./models/expense');
@@ -20,6 +21,7 @@ app.use(express.static(path.join(__dirname,'public')));
 app.use('/user',userRoutes);
 app.use('/expense',expenseRoutes);
 app.use('/payment',paymentRoutes);
+app.use('/premium',premiumRoutes);
 app.use('/',indexRoutes);
 app.use(errorController.error);
 

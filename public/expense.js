@@ -128,7 +128,7 @@ function checkPrime(){
 
 async function showLeaderboard(){
     try{
-        let res = await axios.get('http://localhost:5000/expense/leaderboard')
+        let res = await axios.get('http://localhost:5000/premium/leaderboard')
         console.log(res.data)
         let LBlist = document.getElementById('LB-list');
         LBlist.innerHTML='';
