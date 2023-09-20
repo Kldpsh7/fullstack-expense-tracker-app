@@ -18,7 +18,9 @@ module.exports.postData = async (req,res,next)=>{
         res.status(403).json({message:"Bad Request"}).end()
     }else{
         try{
-            let response = await req.user.createExpense({amount:req.body.amount, description:req.body.description, category:req.body.category})
+            await Promise.all([
+            req.user.createExpense({amount:req.body.amount, description:req.body.description, category:req.body.category}),
+            req.user.increment('totalExpenses',{by:req.body.amount})]);
             res.status(201).json({message:'Record Added'})
         }catch(err){
             res.status(400).json({message:'Some error occured'})
@@ -31,6 +33,7 @@ module.exports.deleteExpense = async (req,res,next)=>{
     console.log(req.query.id)
     try{
         let userExpenses = await req.user.getExpenses({where:{id: req.query.id}})
+        req.user.decrement('totalExpenses',{by:userExpenses[0].amount})
         await userExpenses[0].destroy()
         res.status(200).json({message:'Deleted Successfully'}).end()
     }catch(err){
