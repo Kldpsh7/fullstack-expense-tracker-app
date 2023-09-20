@@ -7,7 +7,6 @@ async function login(e){
     try{
         let res = await axios.post('http://localhost:5000/user/login',obj)
         localStorage.setItem('token',res.data.token)
-        localStorage.setItem('primeStatus',res.data.primeStatus)
         let msg=document.getElementById('alert');
         msg.style="color: green;";
         msg.innerHTML=res.data.message;

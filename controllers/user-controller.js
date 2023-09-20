@@ -51,7 +51,7 @@ module.exports.postLogin = (req,res,next)=>{
             else{
                 bcrypt.compare(req.body.Password,user.password,(err,success)=>{
                     if(success){
-                        res.status(201).json({message:"Login Successfull",token:jwtCrypt(user.email),primeStatus:user.isPrime})
+                        res.status(201).json({message:"Login Successfull",token:jwtCrypt(user.email,user.name,user.isPrime)})
                     }else{
                         res.status(401).json({message:"Incorrect Password"})
                     }
@@ -61,6 +61,6 @@ module.exports.postLogin = (req,res,next)=>{
     }
 }
 
-function jwtCrypt(id){
-    return jwt.sign(id,'edgbnwuydgeiqundg147982987ded7w98de7w8ed7w198edw28w98wd798e7dw9')
+function jwtCrypt(id,name,prime){
+    return jwt.sign({id,name,prime},'edgbnwuydgeiqundg147982987ded7w98de7w8ed7w198edw28w98wd798e7dw9')
 }

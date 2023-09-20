@@ -15,6 +15,9 @@ function getRecords(){
 
 function showOnScreen(data){
     document.getElementById('list').innerHTML='';
+    let headline = document.createElement('h3');
+    headline.innerHTML='Your Expenses';
+    document.getElementById('list').appendChild(headline)
     for(item of data){
         let li = document.createElement('li');
         li.id=item.id;
@@ -87,7 +90,7 @@ document.getElementById('buy-premium-btn').onclick = async (e)=>{
                     payment_id:response.razorpay_payment_id
                 })
                 alert('You Are a Premium User Now')
-                localStorage.setItem("primeStatus",res.data.primeStatus)
+                localStorage.setItem('token',res.data.token)
                 checkPrime()
             }catch(err){
                 console.log(err)
@@ -107,16 +110,18 @@ document.getElementById('buy-premium-btn').onclick = async (e)=>{
     })
 }
 function checkPrime(){
-    const primeStatus=localStorage.getItem('primeStatus');
-    if(primeStatus=='true'){
+    const token=localStorage.getItem('token');
+    const decodedToekn = parseJwt(token);
+    if(decodedToekn.prime==true){
         document.getElementById('buy-premium-div').innerHTML='';
         const pageHeading = document.getElementById('page-heading');
-        pageHeading.innerHTML += '<h3>Welcome Prime Member</h3>';
+        pageHeading.innerHTML += `<h3>Welcome ${decodedToekn.name}</h3>`;
+        pageHeading.innerHTML += 'You are a premium member';
         let leaderboardbtn = document.createElement('button');
         leaderboardbtn.id='leaderboardBtn'
         leaderboardbtn.innerHTML='Show Leaderboard';
         pageHeading.appendChild(leaderboardbtn);
-        pageHeading.innerHTML += '<br>'
+        pageHeading.innerHTML += '<br><br>'
         document.getElementById('leaderboardBtn').onclick = showLeaderboard;
     }
 }
@@ -124,20 +129,31 @@ function checkPrime(){
 async function showLeaderboard(){
     try{
         let res = await axios.get('http://localhost:5000/expense/leaderboard')
+        console.log(res.data)
         let LBlist = document.getElementById('LB-list');
         LBlist.innerHTML='';
         let lbheading = document.createElement('h3');
         lbheading.innerHTML='Leaderboard';
         LBlist.appendChild(lbheading);
-        for(entry in res.data){
+        for(entry of res.data){
             let LBlist = document.getElementById('LB-list');
             let li = document.createElement('li');
             li.className = 'LB-entry';
-            li.innerHTML = entry+' --> '+res.data[entry];
+            li.innerHTML = entry.name+' --> '+entry.totalExpenses;
             LBlist.appendChild(li)
         }
     }
     catch(err){
         console.log(err)
     }
+}
+
+function parseJwt (token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
 }

@@ -2,6 +2,7 @@ const path = require('path');
 const Expense = require('../models/expense');
 const User = require('../models/user');
 const { use } = require('../routes/user-routes');
+const sequelize = require('../database/db');
 
 module.exports.getExpense = (req,res,next)=>{
     res.sendFile(path.join(__dirname,'../','views','expense.html'))
@@ -40,21 +41,13 @@ module.exports.deleteExpense = async (req,res,next)=>{
 
 module.exports.getleaderboard = async (req,res,next)=>{
     try{
-        let obj ={};
-        let users = await User.findAll();
-        for(let usr of users){
-            let total = 0;
-            let exps = await usr.getExpenses();
-            for(let e of exps){
-                total = total+e.amount;
-            }
-            let Uname = usr.name;
-            obj[Uname] = total
-        }
-        const sortedArr = Object.entries(obj).sort((x, y) => y[1] - x[1]);
-        const sortedObject = Object.fromEntries(sortedArr);
-        console.log(sortedObject)
-        res.status(200).json(sortedObject).end()
+        let LBdata = await User.findAll(
+            {attributes:['email','name',[sequelize.fn('sum', sequelize.col('expenses.amount')),'totalExpenses']],
+            include:[{model:Expense,attributes:[]}],
+            group:['user.email'],
+            order:[['totalExpenses','DESC']]
+        });
+        res.status(200).json(LBdata).end()
     }
     catch(err){
         console.log(err)
