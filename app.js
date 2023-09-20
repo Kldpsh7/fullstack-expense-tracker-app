@@ -9,10 +9,12 @@ const errorController = require('./controllers/errorController');
 const expenseRoutes = require('./routes/expense-routes');
 const paymentRoutes = require('./routes/payment-routes');
 const premiumRoutes = require('./routes/premium-routes');
+const passwordRoutes = require('./routes/password-routes');
 
 const User = require('./models/user');
 const Expense = require('./models/expense');
 const Order = require('./models/order');
+const PasswordResetRequest = require('./models/passwordResetRequests');
 
 const app = express();
 app.use(bodyParser.urlencoded({extended:false}));
@@ -22,6 +24,7 @@ app.use('/user',userRoutes);
 app.use('/expense',expenseRoutes);
 app.use('/payment',paymentRoutes);
 app.use('/premium',premiumRoutes);
+app.use('/password',passwordRoutes);
 app.use('/',indexRoutes);
 app.use(errorController.error);
 
@@ -29,7 +32,10 @@ Expense.belongsTo(User);
 User.hasMany(Expense);
 
 Order.belongsTo(User);
-User.hasMany(Order)
+User.hasMany(Order);
+
+PasswordResetRequest.belongsTo(User);
+User.hasMany(PasswordResetRequest);
 
 sequelize.sync()
 .then(()=>{

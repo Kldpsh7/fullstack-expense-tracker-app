@@ -4,12 +4,13 @@ const Order = require('../models/order');
 const Razorpay = require('razorpay');
 const { promises } = require('dns');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 module.exports.getBuyPremium = async (req,res,next)=>{
     try{
         let rzp = new Razorpay({
-            key_id:'rzp_test_HmUSIQiqb5AlOz',
-            key_secret: 'nOwiA4KzZRYapLwP3R0t6mn7'
+            key_id: process.env.RZP_KEY_ID,
+            key_secret: process.env.RZP_KEY_SECRET
         })
         rzp.orders.create({amount:5000,currency:'INR'}, (err,order)=>{
             if(err){
@@ -45,5 +46,5 @@ module.exports.postPaymentFailed = async (req,res,next)=>{
 }
 
 function jwtCrypt(id,name,prime){
-    return jwt.sign({id,name,prime},'edgbnwuydgeiqundg147982987ded7w98de7w8ed7w198edw28w98wd798e7dw9')
+    return jwt.sign({id,name,prime}, process.env.JWT_SECRET)
 }
