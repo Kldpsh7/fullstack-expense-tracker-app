@@ -2,6 +2,8 @@ const path = require('path');
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const Sib = require('sib-api-v3-sdk');
+require('dotenv').config();
 
 module.exports.getSignUp = (req,res,next)=>{
     res.sendFile(path.join(__dirname,'../','views','signup.html'))
@@ -77,10 +79,11 @@ module.exports.postResetPassword = async (req,res,next)=>{
     else{
         try{
             const user = await User.findByPk(req.body.email)
-            console.log(user);
             if(!user){
                 res.status(404).json({message:'User Not Found'}).end();
             }else{
+                const mailtoken = await sendEmail()
+                console.log(mailtoken)
                 res.status(201).json({messgae:'Reset Mail Sent'}).end();
             }
         }
@@ -88,4 +91,24 @@ module.exports.postResetPassword = async (req,res,next)=>{
             console.log(err);
         }
     }
+}
+
+function sendEmail(){
+    const client = Sib.ApiClient.instance;
+    const apiKey = client.authentications['api-key'];
+    apiKey.apiKey = process.env.SIB_API_KEY;
+    const tranEmailApi = new Sib.TransactionalEmailsApi();
+    const sender = {
+        email:'kldpsh77@getMaxListeners.com',
+        name:'Expense Tracker'
+    }
+    const reciever = [{
+        email:'kldpsh7@gmail.com'
+    }]
+    return tranEmailApi.sendTransacEmail({
+        sender,
+        to:reciever,
+        subject:'Reset your Password',
+        textContent:'Test Email'
+    })
 }
