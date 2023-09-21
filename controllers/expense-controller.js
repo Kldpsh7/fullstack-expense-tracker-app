@@ -11,9 +11,24 @@ module.exports.getExpense = (req,res,next)=>{
 }
 
 module.exports.getData = async (req,res,next)=>{
+    let page = parseInt(req.query.page);
+    const itemsPerPage = 2;
     try{
-        let data = await req.user.getExpenses();
-        res.status(200).json(data).end();
+        var totalItems = await Expense.count({where:{userEmail:req.user.email}})
+        let data = await req.user.getExpenses({
+            offset:(page-1)*itemsPerPage,
+            limit:itemsPerPage
+        });
+        console.log(totalItems,data)
+        res.status(200).json({
+            items:data,
+            currentPage:page,
+            hasNextPage:itemsPerPage*page<totalItems,
+            nextPage:page+1,
+            hasPreviousPage:page>1,
+            previousPage:page-1,
+            lastPage:Math.ceil(totalItems/itemsPerPage)
+        }).end();
     }
     catch(err){
         console.log(err)

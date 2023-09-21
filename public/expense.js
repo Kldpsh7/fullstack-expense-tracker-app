@@ -1,20 +1,23 @@
 document.addEventListener('DOMContentLoaded',()=>{
-    getRecords()
+    var page = 1;
+    getRecords(page)
     checkPrime()
 });
 document.getElementById('list').addEventListener('click',deleteExpense);
 
 axios.defaults.headers.common['auth'] = localStorage.getItem('token')
 
-function getRecords(){
-    axios.get('http://localhost:5000/expense/data')
+function getRecords(page){
+    axios.get(`http://localhost:5000/expense/data?page=${page}`)
     .then(res=>{
-        showOnScreen(res.data);
+        showOnScreen(res.data.items,res.data);
     }).catch(err=>console.log(err));
 }
 
-function showOnScreen(data){
-    document.getElementById('list').innerHTML='';
+function showOnScreen(data,otherData){
+    console.log(otherData)
+    let list = document.getElementById('list');
+    list.innerHTML=''
     let headline = document.createElement('h3');
     headline.innerHTML='Your Expenses';
     document.getElementById('list').appendChild(headline)
@@ -30,6 +33,28 @@ function showOnScreen(data){
         li.appendChild(delbtn)
         document.getElementById('list').appendChild(li)
     }
+    if(otherData.hasPreviousPage){
+        let prevBtn = document.createElement('button');
+        prevBtn.innerHTML=otherData.previousPage;
+        prevBtn.setAttribute('onclick',`getRecords(${otherData.previousPage})`);
+        list.appendChild(prevBtn);
+    }
+    let currentBtn = document.createElement('button');
+    currentBtn.innerHTML=otherData.currentPage;
+    currentBtn.style="color:blue"
+    list.appendChild(currentBtn)
+    if(otherData.hasNextPage){
+        let nextBtn = document.createElement('button');
+        nextBtn.innerHTML=otherData.nextPage;
+        nextBtn.setAttribute('onclick',`getRecords(${otherData.nextPage})`);
+        list.appendChild(nextBtn);
+    }
+    if(otherData.lastPage>otherData.currentPage+1){
+        let lastBtn = document.createElement('button');
+        lastBtn.innerHTML = 'last'+otherData.lastPage;
+        lastBtn.setAttribute('onclick',`getRecords(${otherData.lastPage})`);
+        list.appendChild(lastBtn);
+    }
 }
 
 async function addExpense(e){
@@ -41,7 +66,7 @@ async function addExpense(e){
     }
     try{
         let res = await axios.post('http://localhost:5000/expense/data',obj)
-        getRecords();
+        getRecords(1);
         let msg = document.getElementById('msg');
         msg.style='color:green';
         msg.innerHTML=res.data.message;
@@ -59,11 +84,10 @@ async function addExpense(e){
 }
 
 async function deleteExpense(e){
-    console.log(e.target.parentElement)
     if(e.target.className=='delete'){
         try{
             let result = await axios.delete(`http://localhost:5000/expense/delete?id=${e.target.parentElement.id}`)
-            getRecords();
+            getRecords(1);
             let msg = document.getElementById('msg');
             msg.style='color:green';
             msg.innerHTML=result.data.message;
@@ -182,6 +206,7 @@ function showPastReports(data){
     let reportDiv = document.getElementById('report-div');
     reportDiv.hidden=''
     const list = document.getElementById('past-reports');
+    list.innerHTML='';
     for(let item of data){
         let li = document.createElement('li');
         li.innerHTML=item.generatedOn;
