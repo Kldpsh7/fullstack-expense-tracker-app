@@ -1,5 +1,5 @@
 async function login(e){
-    e.preventDefault();
+    e.preventDefault()
     let obj = {
         Email:e.target.Email.value,
         Password:e.target.Password.value

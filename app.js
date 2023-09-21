@@ -2,6 +2,10 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const sequelize = require('./database/db');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const fs = require('fs');
+const csp = require('helmet-csp');
 
 const userRoutes = require('./routes/user-routes');
 const indexRoutes = require('./routes/index-routes');
@@ -18,9 +22,18 @@ const PasswordResetRequest = require('./models/passwordResetRequests');
 const Report = require('./models/reports');
 
 const app = express();
+
+const accessLogStream = fs.createWriteStream(
+    path.join(__dirname,'access.log'),
+    {flags:'a'}
+)
+
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(express.json())
 app.use(express.static(path.join(__dirname,'public')));
+app.use(helmet({contentSecurityPolicy: false}));
+app.use(morgan('combined',{stream:accessLogStream}));
+
 app.use('/user',userRoutes);
 app.use('/expense',expenseRoutes);
 app.use('/payment',paymentRoutes);
@@ -43,7 +56,6 @@ User.hasMany(Report);
 
 sequelize.sync()
 .then(()=>{
-    app.listen(3000)
+    app.listen(process.env.PORT || 5000)
 })
 .catch(err=>console.log(err))
-app.listen(5000);

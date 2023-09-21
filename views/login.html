@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <script src="../login.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
     <h1 class="main-heading">Log-In</h1>
-    <form onsubmit="login(event)" class="ligin-form" id="login-form">
+    <form onsubmit="login(event)" class="login-form" id="login-form">
         <label for="username" class="label">Username</label>
         <input type="email" class="login-username" id="username" name="Email" required>
         <label for="login-password" class="label"></label>
@@ -19,5 +18,6 @@
         <p class="alert" id="alert"></p><br>
         <a href="/user/signup" class="signup-link">New User? SignUp</a>
     </form>
+    <script src="../login.js"></script>
 </body>
 </html>

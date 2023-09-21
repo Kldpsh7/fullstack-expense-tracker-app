@@ -19,7 +19,6 @@ module.exports.getData = async (req,res,next)=>{
             offset:(page-1)*itemsPerPage,
             limit:itemsPerPage
         });
-        console.log(totalItems,data)
         res.status(200).json({
             items:data,
             currentPage:page,
