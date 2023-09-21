@@ -15,6 +15,7 @@ const User = require('./models/user');
 const Expense = require('./models/expense');
 const Order = require('./models/order');
 const PasswordResetRequest = require('./models/passwordResetRequests');
+const Report = require('./models/reports');
 
 const app = express();
 app.use(bodyParser.urlencoded({extended:false}));
@@ -36,6 +37,9 @@ User.hasMany(Order);
 
 PasswordResetRequest.belongsTo(User);
 User.hasMany(PasswordResetRequest);
+
+Report.belongsTo(User);
+User.hasMany(Report);
 
 sequelize.sync()
 .then(()=>{

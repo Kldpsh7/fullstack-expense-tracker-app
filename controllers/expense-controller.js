@@ -3,6 +3,8 @@ const Expense = require('../models/expense');
 const User = require('../models/user');
 const { use } = require('../routes/user-routes');
 const sequelize = require('../database/db');
+const S3Services = require('../services/S3Services');
+const Report = require('../models/reports');
 
 module.exports.getExpense = (req,res,next)=>{
     res.sendFile(path.join(__dirname,'../','views','expense.html'))
@@ -50,5 +52,21 @@ module.exports.deleteExpense = async (req,res,next)=>{
         await t.rollback();
         res.status(500).json({message:'Something Wrong'}).end();
         console.log(err);
+    }
+}
+
+module.exports.getReport = async (req,res,next)=>{
+    try{
+        const expenses = await req.user.getExpenses();
+        const expenseString = JSON.stringify(expenses)
+        console.log(expenseString);
+        const fileUrl = await S3Services.uploadToS3(expenseString,`expenses_${req.user.email}/${new Date()}.txt`);
+        await req.user.createReport({generatedOn:new Date(),fileLink:fileUrl});
+        const pastReports = await req.user.getReports();
+        res.status(200).json({fileUrl:fileUrl,message:'success',pastReports:pastReports}).end()
+    }
+    catch(err){
+        console.log(err)
+        res.status(500),json({message:'something wrong'}).end()
     }
 }

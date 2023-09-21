@@ -122,7 +122,7 @@ function checkPrime(){
         leaderboardbtn.innerHTML='Show Leaderboard';
         let reportBtn = document.createElement('button');
         reportBtn.id='reportBtn';
-        reportBtn.innerHTML='Generate Report'
+        reportBtn.innerHTML='Download Report'
         pageHeading.appendChild(leaderboardbtn);
         pageHeading.appendChild(reportBtn);
         pageHeading.innerHTML += '<br><br>'
@@ -164,7 +164,31 @@ function parseJwt (token) {
 }
 
 async function generateReport(){
+    try{
+        let response = await axios.get('http://localhost:5000/expense/report');
+        console.log(response.data);
+        let a = document.createElement('a');
+        a.href=response.data.fileUrl;
+        a.setAttribute('download','Expense.csv')
+        a.click();
+        showPastReports(response.data.pastReports)
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+function showPastReports(data){
     let reportDiv = document.getElementById('report-div');
     reportDiv.hidden=''
-    console.log('Repor;t Generation Started')
+    const list = document.getElementById('past-reports');
+    for(let item of data){
+        let li = document.createElement('li');
+        li.innerHTML=item.generatedOn;
+        let downloadBtn = document.createElement('button');
+        downloadBtn.innerHTML='Donwload';
+        downloadBtn.setAttribute('onclick',`window.location.href='${item.fileLink}'`);
+        li.appendChild(downloadBtn);
+        list.appendChild(li);
+    }
 }

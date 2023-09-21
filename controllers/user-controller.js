@@ -22,7 +22,7 @@ module.exports.postSignUp = async (req,res,next)=>{
             }
             else{
                 let hash = await bcrypt.hash(req.body.Password,10);           
-                await User.create({email:req.body.Email, name:req.body.Name, password:hash});                  
+                await User.create({email:req.body.Email, name:req.body.Name, password:hash, totalExpenses:0});                  
                 res.status(201).json({message:"Success"});               
         }}
         catch(err){
