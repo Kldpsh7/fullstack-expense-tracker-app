@@ -12,7 +12,7 @@ module.exports.getExpense = (req,res,next)=>{
 
 module.exports.getData = async (req,res,next)=>{
     let page = parseInt(req.query.page);
-    const itemsPerPage = 2;
+    const itemsPerPage = parseInt(req.query.itemsPerPage);
     try{
         var totalItems = await Expense.count({where:{userEmail:req.user.email}})
         let data = await req.user.getExpenses({

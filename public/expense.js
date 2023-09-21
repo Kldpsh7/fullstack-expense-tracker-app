@@ -8,7 +8,11 @@ document.getElementById('list').addEventListener('click',deleteExpense);
 axios.defaults.headers.common['auth'] = localStorage.getItem('token')
 
 function getRecords(page){
-    axios.get(`http://localhost:5000/expense/data?page=${page}`)
+    let itemsPerPage = localStorage.getItem('itemsPerPage');
+    if(!itemsPerPage){
+        itemsPerPage=5;
+    }
+    axios.get(`http://localhost:5000/expense/data?page=${page}&itemsPerPage=${itemsPerPage}`)
     .then(res=>{
         showOnScreen(res.data.items,res.data);
     }).catch(err=>console.log(err));
@@ -21,6 +25,26 @@ function showOnScreen(data,otherData){
     let headline = document.createElement('h3');
     headline.innerHTML='Your Expenses';
     document.getElementById('list').appendChild(headline)
+    let itemPerPage = document.createElement('input');
+    itemPerPage.type='number';
+    itemPerPage.id='itemsPerPage';
+    let label = document.createElement('label');
+    label.for='itemsPerPage';
+    label.innerHTML='Select Itmes Per Page';
+    let savedValue = localStorage.getItem('itemsPerPage');
+    if(!savedValue){
+        itemPerPage.value=5;
+    }else{
+        itemPerPage.value=savedValue;
+    }
+    let setBtn = document.createElement('button');
+    setBtn.innerHTML='Set';
+    setBtn.setAttribute('onclick',`setItemsPerPage()`);
+    let paginationDiv = document.createElement('div');
+    paginationDiv.appendChild(label);
+    paginationDiv.appendChild(itemPerPage);
+    paginationDiv.appendChild(setBtn);
+    list.appendChild(paginationDiv);
     for(item of data){
         let li = document.createElement('li');
         li.id=item.id;
@@ -55,6 +79,11 @@ function showOnScreen(data,otherData){
         lastBtn.setAttribute('onclick',`getRecords(${otherData.lastPage})`);
         list.appendChild(lastBtn);
     }
+}
+
+function setItemsPerPage(){
+    localStorage.setItem('itemsPerPage',document.getElementById('itemsPerPage').value);
+    getRecords(1);
 }
 
 async function addExpense(e){
