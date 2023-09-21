@@ -120,9 +120,14 @@ function checkPrime(){
         let leaderboardbtn = document.createElement('button');
         leaderboardbtn.id='leaderboardBtn'
         leaderboardbtn.innerHTML='Show Leaderboard';
+        let reportBtn = document.createElement('button');
+        reportBtn.id='reportBtn';
+        reportBtn.innerHTML='Generate Report'
         pageHeading.appendChild(leaderboardbtn);
+        pageHeading.appendChild(reportBtn);
         pageHeading.innerHTML += '<br><br>'
         document.getElementById('leaderboardBtn').onclick = showLeaderboard;
+        document.getElementById('reportBtn').onclick = generateReport;
     }
 }
 
@@ -156,4 +161,10 @@ function parseJwt (token) {
     }).join(''));
 
     return JSON.parse(jsonPayload);
+}
+
+async function generateReport(){
+    let reportDiv = document.getElementById('report-div');
+    reportDiv.hidden=''
+    console.log('Repor;t Generation Started')
 }
