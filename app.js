@@ -58,7 +58,7 @@ User.hasMany(Report);
 
 sequelize.sync()
 .then(()=>{
-    let server = app.listen(process.env.PORT || 5000)
+    let server = app.listen(process.env.PORT || 3000)
     console.log('listening on port : ',server.address().port);
 })
 .catch(err=>console.log(err))
