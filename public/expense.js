@@ -12,7 +12,7 @@ function getRecords(page){
     if(!itemsPerPage){
         itemsPerPage=5;
     }
-    axios.get(`http://localhost:5000/expense/data?page=${page}&itemsPerPage=${itemsPerPage}`)
+    axios.get(`/expense/data?page=${page}&itemsPerPage=${itemsPerPage}`)
     .then(res=>{
         showOnScreen(res.data.items,res.data);
     }).catch(err=>console.log(err));
@@ -94,7 +94,7 @@ async function addExpense(e){
         category:e.target.category.value
     }
     try{
-        let res = await axios.post('http://localhost:5000/expense/data',obj)
+        let res = await axios.post('/expense/data',obj)
         getRecords(1);
         let msg = document.getElementById('msg');
         msg.style='color:green';
@@ -115,7 +115,7 @@ async function addExpense(e){
 async function deleteExpense(e){
     if(e.target.className=='delete'){
         try{
-            let result = await axios.delete(`http://localhost:5000/expense/delete?id=${e.target.parentElement.id}`)
+            let result = await axios.delete(`/expense/delete?id=${e.target.parentElement.id}`)
             getRecords(1);
             let msg = document.getElementById('msg');
             msg.style='color:green';
@@ -132,7 +132,7 @@ async function deleteExpense(e){
 }
 
 document.getElementById('buy-premium-btn').onclick = async (e)=>{
-    let response = await axios.get('http://localhost:5000/payment/buypremium')
+    let response = await axios.get('/payment/buypremium')
     let options = {
         "key":response.data.key_id,
         "order_id":response.data.order.id,
@@ -157,7 +157,7 @@ document.getElementById('buy-premium-btn').onclick = async (e)=>{
     rzp1.on('payment.failed',res=>{
         console.log(res.error.metadata.order_id)
         alert('Something Went Wrong')
-        axios.post('http://localhost:5000/payment/failed',{order_id:res.error.metadata.order_id})
+        axios.post('/payment/failed',{order_id:res.error.metadata.order_id})
         .then(()=>console.log('status set to failed'))
         .catch(e=>console.log(e))
     })
@@ -186,7 +186,7 @@ function checkPrime(){
 
 async function showLeaderboard(){
     try{
-        let res = await axios.get('http://localhost:5000/premium/leaderboard')
+        let res = await axios.get('/premium/leaderboard')
         console.log(res.data)
         let LBlist = document.getElementById('LB-list');
         LBlist.innerHTML='';
@@ -218,7 +218,7 @@ function parseJwt (token) {
 
 async function generateReport(){
     try{
-        let response = await axios.get('http://localhost:5000/expense/report');
+        let response = await axios.get('/expense/report');
         console.log(response.data);
         let a = document.createElement('a');
         a.href=response.data.fileUrl;

@@ -5,7 +5,7 @@ function signup(e){
         Email:e.target.Email.value,
         Password:e.target.Password.value
     }
-    axios.post('http://localhost:5000/user/signup',obj)
+    axios.post('/user/signup',obj)
     .then(res=>{
         console.log(res)
         let showMsg = document.getElementById('status');

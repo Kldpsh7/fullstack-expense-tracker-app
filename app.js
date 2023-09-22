@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const fs = require('fs');
 const csp = require('helmet-csp');
+const cors = require('cors');
 
 const userRoutes = require('./routes/user-routes');
 const indexRoutes = require('./routes/index-routes');
@@ -29,10 +30,11 @@ const accessLogStream = fs.createWriteStream(
 )
 
 app.use(bodyParser.urlencoded({extended:false}));
-app.use(express.json())
+app.use(express.json());
 app.use(express.static(path.join(__dirname,'public')));
 app.use(helmet({contentSecurityPolicy: false}));
 app.use(morgan('combined',{stream:accessLogStream}));
+app.use(cors({origin:'*'}));
 
 app.use('/user',userRoutes);
 app.use('/expense',expenseRoutes);
@@ -56,6 +58,7 @@ User.hasMany(Report);
 
 sequelize.sync()
 .then(()=>{
-    app.listen(process.env.PORT || 5000)
+    let server = app.listen(process.env.PORT || 5000)
+    console.log('listening on port : ',server.address().port);
 })
 .catch(err=>console.log(err))

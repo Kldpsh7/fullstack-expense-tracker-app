@@ -3,7 +3,7 @@ async function changePassword(e){
     try{
         let res = await axios.post(window.location.href,{password:e.target.newPass.value})
         document.body.innerHTML+='<h2>Success</h2><p>Redirecting to Login</p>'
-        setTimeout(() => document.location.href='http://localhost:5000', 1000);
+        setTimeout(() => document.location.href='/', 1000);
     }
     catch(err){
         console.log(err)
