@@ -19,7 +19,6 @@ function getRecords(page){
 }
 
 function showOnScreen(data,otherData){
-    console.log(otherData)
     let list = document.getElementById('list');
     list.innerHTML=''
     let headline = document.createElement('h3');
@@ -168,8 +167,8 @@ function checkPrime(){
     if(decodedToekn.prime==true){
         document.getElementById('buy-premium-div').innerHTML='';
         const pageHeading = document.getElementById('page-heading');
-        pageHeading.innerHTML += `<h3>Welcome ${decodedToekn.name}</h3>`;
-        pageHeading.innerHTML += 'You are a premium member';
+        pageHeading.innerHTML += `<h3 class="welcomeNote">Welcome ${decodedToekn.name}</h3>`;
+        pageHeading.innerHTML += 'You are a premium member<hr><br>';
         let leaderboardbtn = document.createElement('button');
         leaderboardbtn.id='leaderboardBtn'
         leaderboardbtn.innerHTML='Show Leaderboard';
@@ -178,7 +177,6 @@ function checkPrime(){
         reportBtn.innerHTML='Download Report'
         pageHeading.appendChild(leaderboardbtn);
         pageHeading.appendChild(reportBtn);
-        pageHeading.innerHTML += '<br><br>'
         document.getElementById('leaderboardBtn').onclick = showLeaderboard;
         document.getElementById('reportBtn').onclick = generateReport;
     }
@@ -189,8 +187,10 @@ async function showLeaderboard(){
         let res = await axios.get('/premium/leaderboard')
         console.log(res.data)
         let LBlist = document.getElementById('LB-list');
+        LBlist.hidden='';
         LBlist.innerHTML='';
         let lbheading = document.createElement('h3');
+        lbheading.className='lbheading'
         lbheading.innerHTML='Leaderboard';
         LBlist.appendChild(lbheading);
         for(entry of res.data){
@@ -236,10 +236,15 @@ function showPastReports(data){
     reportDiv.hidden=''
     const list = document.getElementById('past-reports');
     list.innerHTML='';
+    let pastreportheaidng = document.createElement('h3');
+    pastreportheaidng.className='pastreportheading';
+    pastreportheaidng.innerHTML='Past reports';
+    list.appendChild(pastreportheaidng);
     for(let item of data){
         let li = document.createElement('li');
         li.innerHTML=item.generatedOn;
         let downloadBtn = document.createElement('button');
+        downloadBtn.className='pastReportDwnldBtn'
         downloadBtn.innerHTML='Donwload';
         downloadBtn.setAttribute('onclick',`window.location.href='${item.fileLink}'`);
         li.appendChild(downloadBtn);

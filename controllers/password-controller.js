@@ -25,7 +25,7 @@ module.exports.postResetPassword = async (req,res,next)=>{
             }else{
                 const email = req.body.email;
                 const uuid = uuidv4();
-                const resetLink = `${process.env.ENDPOINT}/password/reset?id=${uuid}`;
+                const resetLink = `${process.env.MYENDPOINT}/password/reset?id=${uuid}`;
                 await user.createPasswordResetRequest({id:uuid,active:true})
                 const mailtoken = await sendEmail(email,resetLink);
                 console.log(mailtoken);
